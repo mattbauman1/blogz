@@ -1,0 +1,15 @@
+.main.py.un~
+__pycache__/main.cpython-36.pyc
+__pycache__/main.cpython-37.pyc
+main.py~
+static/.style.css.un~
+static/style.css~
+templates/.base.html.un~
+templates/.blog.html.un~
+templates/.newpost.html.un~
+templates/.style.css.un~
+templates/base.html~
+templates/blog.html~
+templates/newpost.html~
+..gitignore.un~
+.gitignore~

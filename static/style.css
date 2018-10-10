@@ -1,0 +1,10 @@
+.error {
+	color: red;
+	font-style: italic;
+}
+h1 {
+	text-align: center;
+}
+th {
+	text-align: left;
+}
