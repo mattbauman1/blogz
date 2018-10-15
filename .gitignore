@@ -13,3 +13,11 @@ templates/blog.html~
 templates/newpost.html~
 ..gitignore.un~
 .gitignore~
+.calendarkeeper.py.un~
+.sortposts.py.un~
+.timestamp.py.un~
+__pycache__/
+calendarkeeper.py~
+sortposts.py~
+timestamp.py~
+sortposts.py
