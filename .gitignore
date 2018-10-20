@@ -14,10 +14,13 @@ templates/newpost.html~
 ..gitignore.un~
 .gitignore~
 .calendarkeeper.py.un~
-.sortposts.py.un~
 .timestamp.py.un~
 __pycache__/
 calendarkeeper.py~
-sortposts.py~
 timestamp.py~
-sortposts.py
+templates/.index.html.un~
+templates/.login.html.un~
+templates/.signup.html.un~
+templates/index.html~
+templates/login.html~
+templates/signup.html~
