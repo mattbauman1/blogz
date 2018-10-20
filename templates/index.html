@@ -6,7 +6,7 @@
 {% else %}
 	<table>
 	{% for user in users %}
-		<tr><th><a href='/user?id={{user.id}}'>{{user.name}}</a></th></tr>
+		<tr><th><a href='/blog?user={{user.id}}'>{{user.username}}</a></th></tr>
 	{% endfor %}
 	</table>
 {% endif %}

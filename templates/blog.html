@@ -1,14 +1,16 @@
 {% extends "base.html" %}
 {% block content %}
 {% if individual_post == False %}
-<h1>Blogz</h1>
+<h1>{{heading}}</h1>
 {% if posts|length == 0 %}
 <p>No Posts yet!</p>
 {% else %}
 	<table>
 	{% for post in posts %}
 		<tr><th><a href='/blog?id={{post.id}}'>{{post.name}}</a></th></tr>
-		<tr><td class="bottom">{{post.content}}</td></tr>
+		<tr><td>{{post.content}}</td></tr>
+		<tr><td>Posted: {{timestamps[loop.index0]}}</td></tr>
+		<tr><td class="bottom">By: <a href='/blog?user={{post.owner.id}}'><u>{{post.owner.username}}</u></a></td></tr>
 	{% endfor %}
 	</table>
 {% endif %}
@@ -16,5 +18,6 @@
 <h1>{{posts.name}}</h1>
 <p>{{posts.content}}</p>
 <p><i>Posted: {{timestamp}}</i></p>
+<p><i>By: <a href='/blog?user={{posts.owner.id}}'><u>{{posts.owner.username}}</u></a></i></p>
 {% endif %}
 {% endblock %}

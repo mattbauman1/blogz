@@ -9,5 +9,6 @@ th {
 	text-align: left;
 }
 .bottom {
+	font-style: italic
 	border-bottom: 1px solid gray;
 }

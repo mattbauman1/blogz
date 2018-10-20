@@ -10,7 +10,7 @@
 			</td>
 			<td>
 				<input id = "user_name" name = "username" type = "text" value = "{{old_username}}">
-				<span class = "error">{{username_error}}</span>
+				{% if username_error == True %}<span class = "error">Username does not exist, please <a href='/signup'><u>sign up</u></a> for one!</span>{% endif %}
 			</td>
 
 		</tr>

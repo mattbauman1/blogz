@@ -1,5 +1,6 @@
 from flask import Flask, request, redirect, render_template, session
 from flask_sqlalchemy import SQLAlchemy
+import re
 from datetime import datetime
 from timestamp import Timestamp
 
@@ -69,41 +70,41 @@ def verifypassword_verification(password, verifypassword):
 
 @app.before_request
 def require_login():
-    allowed_routes = ['login', 'blog', 'signup', 'index']
+    allowed_routes = ['login', 'blog', 'signup', 'index', 'logout']
     if request.endpoint not in allowed_routes and 'username' not in session:
         return redirect('/login')
 
 @app.route('/logout')
 def logout():
-    del session['username']
+    if 'username' in session:
+        del session['username']
     return redirect('/blog')
 
 @app.route('/', methods=['GET'])
 def index():
     users = User.query.all()
-    users.sort(key=lambda user: user.name)
+    users.sort(key=lambda user: user.username)
     return render_template('index.html', title="Blogz", users = users)
 
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():
     if  request.method == 'POST':
         username = request.form.get('username')
+        existing_user = User.query.filter_by(username=username).first()
         password = request.form.get('password')
         verifypassword = request.form.get('verifypassword')
         adjustable_username_error = username_verification(username)
         adjustable_password_error = password_verification(password)
         adjustable_verifypassword_error = verifypassword_verification(password, verifypassword)
-        if adjustable_username_error != "" or adjustable_password_error != "" or adjustable_verifypassword_error != "" or adjustable_email_error != "":
-            return render_template('signup.html', title = "Blogz", old_username_value = username, old_email_value = email, username_error = adjustable_username_error, password_error = adjustable_password_error, verifypassword_error = adjustable_verifypassword_error)
-        existing_user = User.query.filter_by(username=username).first()
-        if not existing_user:
-            new_user = User(username, password)
-            db.session.add(new_user)
-            db.session.commit()
-            session['username'] = username
-            return redirect('/newpost')
-        else:
-            return render_template("signup.html", title = "Blogz", username_error = "This username already exist, please choose a different username!")
+        if existing_user and (adjustable_password_error != "" or adjustable_verifypassword_error != ""):
+            return render_template('signup.html', title = "Blogz", username_error = 'The username "' + username + '" already exist, please choose a different username!', password_error = adjustable_password_error, verifypassword_error = adjustable_verifypassword_error)
+        if adjustable_username_error != "" or adjustable_password_error != "" or adjustable_verifypassword_error != "":
+            return render_template('signup.html', title = "Blogz", old_username_value = username, username_error = adjustable_username_error, password_error = adjustable_password_error, verifypassword_error = adjustable_verifypassword_error)
+        new_user = User(username, password)
+        db.session.add(new_user)
+        db.session.commit()
+        session['username'] = username
+        return redirect('/newpost')
     return render_template('signup.html', title = "Blogz")
 
 @app.route('/login', methods=['POST', 'GET'])
@@ -117,7 +118,7 @@ def login():
             return redirect('/newpost')
         else:
             if not user:
-                return render_template('login.html', title = "Blogz", old_username = username, username_error = 'Username does not exist, please <a href="/signup">sign-up,</a> for one!')
+                return render_template('login.html', title = "Blogz", old_username = username, username_error = True)
             else:
                 return render_template('login.html', title = "Blogz", old_username = username, password_error = 'You entered an incorrect password for this account, please try again!')
     return render_template('login.html', title = "Blogz")
@@ -126,17 +127,24 @@ def login():
 def blog():
     user_id = request.args.get('user')
     if user_id != None:
-        posts = User.query.filter_by(id=user_id).first().posts.all()
+        owner = User.query.filter_by(id = user_id).first()
+        posts = Post.query.filter_by(owner=owner).all()
         posts.sort(key=lambda post: post.timestamp, reverse=True)
+        timestamps = []
+        for post in range(len(posts)):
+            timestamps.append(Timestamp(posts[post].timestamp).timestampformatter())
+        return render_template('blog.html', title="Blogz", heading = owner.username + "'s Posts", posts = posts, timestamps = timestamps, individual_post = False)
     post_id = request.args.get('id')
     if post_id != None:
         post = Post.query.filter_by(id=post_id)
         timestamp = Timestamp(post[0].timestamp).timestampformatter()
         return render_template('blog.html', title=post[0].name, posts = post[0], timestamp = timestamp, individual_post = True)
-    else:
-        posts = Post.query.all()
-        posts.sort(key=lambda post: post.timestamp, reverse=True)
-        return render_template('blog.html', title="Blogz", posts = posts, individual_post = False)
+    posts = Post.query.all()
+    posts.sort(key=lambda post: post.timestamp, reverse=True)
+    timestamps = []
+    for post in range(len(posts)):
+        timestamps.append(Timestamp(posts[post].timestamp).timestampformatter())
+    return render_template('blog.html', title="Blogz", heading = "Blogz", posts = posts, timestamps = timestamps, individual_post = False)
 
 @app.route('/newpost', methods=['POST', 'GET'])
 def newpost():
