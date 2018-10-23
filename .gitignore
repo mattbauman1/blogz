@@ -24,3 +24,5 @@ templates/.signup.html.un~
 templates/index.html~
 templates/login.html~
 templates/signup.html~
+.hashutils.py.un~
+hashutils.py~

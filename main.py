@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 import re
 from datetime import datetime
 from timestamp import Timestamp
+from hashutils import *
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
@@ -29,12 +30,12 @@ class Post(db.Model):
 class User(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     username = db.Column(db.String(30), unique = True)
-    password = db.Column(db.String(30))
+    password = db.Column(db.String(64))
     posts = db.relationship('Post', backref = 'owner')
 
     def __init__(self, username, password):
         self.username = username
-        self.password = password
+        self.password = make_pw_hash(password)
 
 def username_verification(username):
     if username == "":
@@ -113,7 +114,7 @@ def login():
         username = request.form.get('username')
         password = request.form.get('password')
         user = User.query.filter_by(username=username).first()
-        if user and user.password == password:
+        if user and check_pw_hash(password, user.password)==True:
             session['username'] = username
             return redirect('/newpost')
         else:
