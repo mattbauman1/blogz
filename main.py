@@ -10,7 +10,7 @@ app.config['DEBUG'] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://blogz:123@localhost:8889/blogz'
 app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
-app.secret_key = '12345'
+app.secret_key = '2de5f2a65bdabe6e6695ebc781b12de3f8c69b748a4b3ce69ee6e3482c6934d3'
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key = True)
